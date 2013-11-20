@@ -1,7 +1,4 @@
-function [W] = train_lr()
-
-    % Regularization coefficient
-    LAMBDA = 0.2;
+function [X] = train_lr()
 
     % Get train and validation sets.
     [T,V] = formatData();
@@ -15,8 +12,7 @@ function [W] = train_lr()
         end
     end
     
-    
-    W = inv((X'*X) + (LAMBDA*eye(N))) * (X'*V{1});
+    W = (X'*X)
     
     function [phi] = sigmoid(x)
         phi = 1 / (1 + exp(-x));
