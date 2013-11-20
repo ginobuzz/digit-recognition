@@ -1,0 +1,25 @@
+function [X] = train_lr()
+%TRAIN_LR Summary of this function goes here
+%   Detailed explanation goes here
+
+    % Import Training Sets
+    D0 = load('features_train/0.txt');
+    D1 = load('features_train/1.txt');
+    D2 = load('features_train/2.txt');
+    D3 = load('features_train/3.txt');
+    D4 = load('features_train/4.txt');
+    D5 = load('features_train/5.txt');
+    D6 = load('features_train/6.txt');
+    D7 = load('features_train/7.txt');
+    D8 = load('features_train/8.txt');
+    D9 = load('features_train/9.txt');
+    
+    [M,N] = size(D);
+    X = zeros(M,N+1);
+    
+    for i = 1:M
+        label = i -1;
+        X(i,:) = [label D(i,:)];
+    end
+
+end
