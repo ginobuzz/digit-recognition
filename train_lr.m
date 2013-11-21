@@ -9,8 +9,9 @@ function [W] = train_lr()
     % Apply sigmoid function to each matrix element.
     X = T{1};
     [M,N] = size(X);
+    
     for i = 1:M
-        for j = 1:N
+        for j = 2:N
             X(i,j) = sigmoid(X(i,j));
         end
     end
