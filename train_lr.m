@@ -2,30 +2,43 @@ function [Y] = train_lr()
 
 
     % Get train and validation sets.
-    [T,V] = formatData();
+    [Train, Valid] = formatData();
+    [M,N] = size(Train);
+    X = [ones(M,1) Train(:,2:N)]; % Data Matrix
+    Y = Train(:,1);               % Target Vector
+    
+    % Create Parameter matrix.
+    W = rand(N,10);
+    
+    % Create Hypothesis matrix.
+    H = hypothesis(X,W);
+    
+    
+    
+    
+    
+    
+    
+    function [H] = hypothesis( X, W )
+        [r,c] = size(X);
+        H = zeros(r,c);
+        
+        for i = 1:r
+            z = 
+        end
+        
+    end
 
-    tmp = T{1};
-    [M,N] = size(tmp);
-    
-    mag = magic(N);
-    W = mag(:,1);
-    
-    X = [ones(M,1) tmp(:, 2:N)];
-    Y = zeros(M,N);
-    
-    for i = 1:M
-        Y(i,:) = sigmoid( X(i,:), W );
+
+
+
+    function c = cost( h, y )
+        arg1 = (-y) * log(h);
+        arg2 = (1 - y) * log(1 - h);
+        c = arg1 - arg2;
     end
     
     
-    
-    
-    
-    function phi = sigmoid( x, w )
-        a = x*w;
-        phi = 1 / (1 + exp(-a));
-    end
-   
 
 
 end

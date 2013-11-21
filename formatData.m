@@ -1,14 +1,14 @@
 function [ T, V ] = formatData()
 %=========================================================================
 % formatData: function converts all 10 training-data sets into two 
-%   labeled matrix-arrays; one for training and one for validation.
+%   labeled matracies; one for training and one for validation.
 % 
 % Input: 
 %   none
 %
 % Output:
-%   T - Cell-array where each cell is a labeled training matrix.
-%   V - Cell-array where each cell is a labeled validation matrix.
+%   T - Mx513 sized labeled training matrix. 
+%   V - Dx513 sized labeled validation matrix.
 %     
 % Author: ginobuzz
 %=========================================================================
@@ -45,9 +45,13 @@ function [ T, V ] = formatData()
         
     end
     
-    
-    T = TrainSet;
-    V = ValidSet;
+    % Build output matracies.
+    T = TrainSet{1};
+    V = ValidSet{1};
+    for i = 2:10
+        T = vertcat(T,TrainSet{i});
+        V = vertcat(V,ValidSet{i});
+    end
     
     fprintf('> Data Format: Successful. [Operation took %f seconds]\n', toc);
 end
