@@ -1,26 +1,31 @@
-function [W] = train_lr()
+function [Y] = train_lr()
 
-    % Regularization coefficient
-    LAMBDA = 0.2;
 
     % Get train and validation sets.
     [T,V] = formatData();
+
+    tmp = T{1};
+    [M,N] = size(tmp);
     
-    % Apply sigmoid function to each matrix element.
-    X = T{1};
-    [M,N] = size(X);
+    mag = magic(N);
+    W = mag(:,1);
+    
+    X = [ones(M,1) tmp(:, 2:N)];
+    Y = zeros(M,N);
     
     for i = 1:M
-        for j = 2:N
-            X(i,j) = sigmoid(X(i,j));
-        end
+        Y(i,:) = sigmoid( X(i,:), W );
     end
     
     
-    W = inv((X'*X) + (LAMBDA*eye(N))) * (X'*V{1});
     
-    function [phi] = sigmoid(x)
-        phi = 1 / (1 + exp(-x));
+    
+    
+    function phi = sigmoid( x, w )
+        a = x*w;
+        phi = 1 / (1 + exp(-a));
     end
+   
+
 
 end
