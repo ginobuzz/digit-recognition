@@ -1,37 +1,40 @@
-function [Y] = train_lr()
+function [H] = train_lr()
 
+    NUM_FEATURES = 513;
 
     % Get train and validation sets.
-    [Train, Valid] = formatData();
-    [M,N] = size(Train);
-    X = [ones(M,1) Train(:,2:N)]; % Data Matrix
-    T = Train(:,1);               % Target Vector
+    [C, N] = formatData();
     
-    % Create W matrix.
-    W = rand(N,10);
+    % Create Parameter matrix.
+    W = rand(10, NUM_FEATURES);
     
-    % Create Hypoth
-    H = sigmoid(X,W);
-    
-    
-    
-    
+    T = C{1};
+    for i = 2:10
+        T = vertcat(T, C{2});
+    end
+    [N,D] = size(T);
+    Y = T(:,1);
+    X = T(:,2:D);
     
     
+    % Build hypothesis matrix.
+    H = hypothesis_lr(X, Y, W);
     
-    function [H] = sigmoid( X, W )
-        [r,c] = size(X);
-        H = zeros(r,c);
-        
-        for i = 2:c % start at two to preserve label.
+    % Perform gradient decent.
+    
+
+
+
+    function c = cost( H )
+       
+        for i = 1:10
+            
+            h = H{i};
+            
+            
             
         end
-    end
-
-
-
-
-    function c = cost( h, y )
+        
         arg1 = (-y) * log(h);
         arg2 = (1 - y) * log(1 - h);
         c = arg1 - arg2;
@@ -41,3 +44,6 @@ function [Y] = train_lr()
 
 
 end
+
+
+

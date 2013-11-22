@@ -1,16 +1,16 @@
-function [ X, Y ] = formatData()
+function [ X, N ] = formatData()
 %=========================================================================
 % formatData: function combines all 10 training data files into a single
 %   cell-array where each element of the cell-array is a matrix.
 % 
-%   Input: 
-%       none
+% Input: 
+%   none
 %
-%   Output:
-%   	X - Training Matrix of size NxD.
-%       Y - Label Vector of size Nx1.
+% Output:
+%   X - Training Matrix of size NxD.
+%   Y - Label Vector of size Nx1.
 %     
-%   Author: ginobuzz
+% Author: ginobuzz
 %=========================================================================
 
     DIR = 'features_train/'; % Directory path.
@@ -21,7 +21,7 @@ function [ X, Y ] = formatData()
    
     T = [];
     for i = 1:10
-        
+        % Load data.
         index = i - 1;
         file_path = strcat(DIR, num2str(index), EXT);
         try
@@ -31,16 +31,13 @@ function [ X, Y ] = formatData()
             error(eMsg);
         end
         
+        % Create column[0] to account for bias.
         [r,c] = size(D);
-        bias  = ones(r,1);
-        label = bias * (i-1);
-        tmp = [label bias D];
+        tmp = [D(:,1) ones(r,1) D(:,2:c)];
         T = [T; tmp];
-        
     end
     
-    Y = T(:,1);
-    X = T(:,2:514);
+    
     
     fprintf('> Data Format: Successful. [Operation took %f seconds]\n', toc);
 

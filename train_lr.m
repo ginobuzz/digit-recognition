@@ -1,44 +1,37 @@
-function [Y] = train_lr()
-
+function [P] = train_lr()
+%==========================================================================
+% train_lr: Linear Regression Classifier
+%
+%   Input:
+%       none
+%
+%   Output:
+%       P - Parameter Matrix.
+%
+%   Author: ginobuzz
+%==========================================================================
 
     % Get train and validation sets.
-    [Train, Valid] = formatData();
-    [M,N] = size(Train);
-    X = [ones(M,1) Train(:,2:N)]; % Data Matrix
-    Y = Train(:,1);               % Target Vector
+    [X, Y] = formatData();
     
     % Create Parameter matrix.
-    W = rand(N,10);
+    P = rand(10, 513);
+
+    % Build hypothesis matrix.
+    H = hypothesis_lr(X, Y, P);
     
-    % Create Hypothesis matrix.
-    H = hypothesis(X,W);
+    % Perform gradient decent.
     
-    
-    
-    
-    
-    
-    
-    function [H] = hypothesis( X, W )
-        [r,c] = size(X);
-        H = zeros(r,c);
-        
-        for i = 1:r
-            z = 
-        end
-        
-    end
 
 
 
-
-    function c = cost( h, y )
+    function c = cost( H )
         arg1 = (-y) * log(h);
         arg2 = (1 - y) * log(1 - h);
         c = arg1 - arg2;
     end
     
-    
-
-
 end
+
+
+

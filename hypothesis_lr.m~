@@ -1,0 +1,26 @@
+function [ H ] = hypothesis_lr( X, Y, W )
+%   Input:
+%       X - Training Matrix of size Mx513.
+%       Y - Label Vector of size Mx1.
+%       W - Parameter Matrix of size 513x10.
+%   Output:
+%       H - Hypothesis Matrix of size Mx513.
+
+
+    [N,D] = size(X);
+    H = zeros(N,513);
+    
+    for n = 1:N
+        
+        label = Y(n,1);
+        w = W(:,label);
+        
+        for d = 1:D
+            wx = w(d,1) * X(n,d);
+            H(n,d) = ( 1 / (1 + exp(-wx)) );
+        end
+        
+    end
+
+end
+
