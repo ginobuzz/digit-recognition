@@ -1,4 +1,4 @@
-function [P] = train_lr()
+function [Theta] = train_lr()
 %==========================================================================
 % train_lr: Linear Regression Classifier
 %
@@ -11,16 +11,22 @@ function [P] = train_lr()
 %   Author: ginobuzz
 %==========================================================================
 
-    % Get train and validation sets.
-    [X, Y] = formatData();
+    % Error threshold; Convergence criteria.
+    E = 0.1;
     
-    % Create Parameter matrix.
-    P = rand(10, 513);
+    
+    [X, Y] = formatData();  % Initialize training matrix and labels.
+    P = rand(10, 513);      % Initialize parameter matrix.
 
-    % Build hypothesis matrix.
-    H = hypothesis_lr(X, Y, P);
     
-    % Perform gradient decent.
+    error = 100;
+    while error > E
+        H = hypothesis_lr(X,Y,P); % Build hypothesis matrix.
+        P = gradientDescent(X,Y,P,H);
+        error = 0.01;
+    end
+    
+    
     
 
 

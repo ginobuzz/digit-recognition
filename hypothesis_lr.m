@@ -8,35 +8,27 @@ function [ H ] = hypothesis_lr( X, Y, P )
 %       P - Parameter Matrix of size 10x513.
 %
 %   Output:
-%       H - Hypothesis Matrix of size Mx513.
+%       H - Hypothesis Matrix of size Nx10, 
+%           where H(i,j) = P( Cj | X(i,:) ). 
 %
 %   Author: ginobuzz
 %==========================================================================
 
     [N,D] = size(X);
-    H = zeros(N,513);
+    H = zeros(N,10);
     
     for n = 1:N
+        a = zeros(1,10);
         
-        pIndex = Y(n,1) + 1;
-        p = P(pIndex,:)';
-        
-        for d = 1:D
-            px = p(d,1) * X(n,d);
-            H(n,d) = sigmoid(px);
+        for c = 1:10
+            a(1,c) = exp(dot(P(c,:), X(n,:)));
         end
         
+        for c = 1:10
+           ak = a(1,c);
+           aj = sum(a) - ak;
+           H(n,c) = ak/aj; 
+        end
     end
-   
-    
-% Local Functions
-%==========================================================================
-    
-
-    function s = sigmoid( a )
-        s = 1 / ( 1 + exp(-a) ); 
-    end
-
-
 end
 
