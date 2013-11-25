@@ -1,6 +1,6 @@
 function [ X, T, L ] = formatData( dir )
 %=========================================================================
-% formatData: combines all 10 feature files into two matricies.
+% formatData: combines all 10 feature files into three matricies.
 % 
 %   Input: 
 %       dir - name of the directory containing the input files.
