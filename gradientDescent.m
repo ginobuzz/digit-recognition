@@ -1,19 +1,21 @@
-function [ Pnew ] = gradientDescent( X, Y, P, H )
+function W_new = gradientDescent( X, T, W, Y )
 
-    [N,C] = size(P);
-    Pnew = zeros(N,C);
-    alpha = 0.0001;
+    ALPHA = 0.0001;
+
+
+    % Initialize new W matrix.
+    [D,M] = size(W);
+    W_new = zeros(D,M);
+
+    for i = 1:D
     
+        cost    = Y(i,:) - T(i,:);
+        regCost = ALPHA * cost;
+        descent = cost' * X(i,:);  
+
+        W_new(i,:) = W(i,:) - descent;
     
-    for i = 1:N
-        cost = alpha * (Y(i,1) - H(i,:));
-        descent = cost' * X(i,:);
-        
-        disp(size(P));
-        disp(size(descent));
-        Pnew(i,:) = P(i,:) - descent;
     end
-    
 
 end
 
