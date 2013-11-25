@@ -1,48 +1,55 @@
-function [ X, Y ] = formatData()
+function [ X, T, L ] = formatData( dir )
 %=========================================================================
-% formatData: function combines all 10 training data files into a single
-%   cell-array where each element of the cell-array is a matrix.
+% formatData: combines all 10 feature files into two matricies.
 % 
 %   Input: 
-%       none
+%       dir - name of the directory containing the input files.
 %
 %   Output:
-%   	X - Training Matrix of size NxD.
-%       Y - Label Vector of size Nx1.
+%       X - Training Matrix of size NxD.
+%       T - Target matrix of size NxM.
+%       L - Label vector of size Nx1.
 %     
 %   Author: ginobuzz
 %=========================================================================
-
-    DIR = 'features_train/'; % Directory path.
-    EXT = '.txt';            % File extension.
     
-    fprintf('> Starting Data Format...\n');
     tic;
-   
-    T = [];
+
+    X = [];% Training Matrix
+    T = [];% Target Matrix
+    L = [];% Label Vector
+
     for i = 1:10
-        
+
+        % Read file.
         index = i - 1;
-        file_path = strcat(DIR, num2str(index), EXT);
+        file_path = strcar(dir, num2str(index), '.txt');
         try
-            D = load(file_path);
+            F = load(file_path);
         catch
             eMsg = strcat('> [ERROR] File not found (', file_path, ').');
             error(eMsg);
         end
-        
-        [r,c] = size(D);
-        bias  = ones(r,1);
-        label = bias * (i-1);
-        tmp = [label bias D];
-        T = [T; tmp];
-        
+
+        % Insert column of ones to front, for bias.
+        [n,d] = size(F);
+        tmpX  = horzcat(ones(n,1), F);
+        X     = vertcat(X,tmpX);
+
+        % Build target boolean-matrix & append to T.
+        [n,d] = size(tmpX);
+        tmpT  = zeros(n,m);
+        for j = 1:n
+            tmpT(j,i) = 1;
+        end
+        T = vertcat(T,tmpT);
+
+        % Build label vector & append to L.
+        tmpL  = ones(n,1) * index;
+        L     = vertcat(L,tmpL);
+
     end
-    
-    Y = T(:,1);
-    X = T(:,2:514);
     
     fprintf('> Data Format: Successful. [Operation took %f seconds]\n', toc);
 
 end
-
