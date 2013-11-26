@@ -15,28 +15,29 @@ function W = train_lr()
     E = 0.01;
 
     % Number of classes.
-    M = 10
+    M = 10;
 
 
     % Initialize training matrix, boolean target matrix, and label vector. 
     [X,T,L] = formatData('features_train/');
     [N,D]   = size(X);
-
+    
     % Initialize parameter matrix.
-    W = zeros(D,M);
+    W = ones(D,M);
 
     error = 100;
     while error > E
 
         % Build hypothesis matrix.
-        Y = hypothesis(X,W);
+        Y = hypothesis_lr(X,W);
 
         % Get new parameter matrix, using gradient descent.
-        W_new = gradientDescent(X,T,W,Y);
-
+        tic; [W_new, e] = gradientDescent(X,T,W,Y);
+        fprintf('> Error Rate: %f [Operation took %f seconds]\n', e, toc);
+        
         % Update error.
-        %! CHANGE 
-        error = 0;
+        error = e;
+        W = W_new;
     end
 
 end

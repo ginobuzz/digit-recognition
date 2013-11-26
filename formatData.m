@@ -23,7 +23,7 @@ function [ X, T, L ] = formatData( dir )
 
         % Read file.
         index = i - 1;
-        file_path = strcar(dir, num2str(index), '.txt');
+        file_path = strcat(dir, num2str(index), '.txt');
         try
             F = load(file_path);
         catch
@@ -38,7 +38,7 @@ function [ X, T, L ] = formatData( dir )
 
         % Build target boolean-matrix & append to T.
         [n,d] = size(tmpX);
-        tmpT  = zeros(n,m);
+        tmpT  = zeros(n,10);
         for j = 1:n
             tmpT(j,i) = 1;
         end

@@ -1,23 +1,21 @@
 function [W_new, error] = gradientDescent( X, T, W, Y )
 
-    ALPHA = 0.0001;
-
-    % Initialize new W matrix.
-    [D,M] = size(W);
-    W_new = zeros(D,M);
-
-    error = 0;
-
-    for i = 1:D
+    W_new = zeros(size(W));
+    [N,D] = size(X);
     
-        diff    = Y(i,:) - T(i,:);
-        cost    = diff' * X(i,:);
-        descent = ALPHA * cost;  
-
-        error = error + cost;
-
-        W_new(i,:) = W(i,:) - descent;
+    gradient = zeros(10,D);
     
+    for m = 1:10
+        
+        for n = 1:N
+            cost     = (Y(n,m) - T(n,m)) * X(n,:);
+            gradient(m,:) = gradient(m,:) + (cost);
+        end
+        
+        W_new(:,m) = W(:,m) - gradient(m,1)';
+        
     end
+    
+    error = sum(gradient);
 
 end
