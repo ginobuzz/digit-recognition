@@ -11,17 +11,12 @@ function [W] = train_lr()
 %   Author: ginobuzz
 %==========================================================================
 
+    Alpha = 0.0001;% Learning Rate.
+    E = 0.0005;% Convergence Criteria.
+    M = 10;% Number of classes.
+
     % Start clock
     tic;
-
-    % Learning Rate
-    Alpha = 0.0001;
-
-    % Convergence criteria
-    E = 0.0005;
-
-    % Number of classes.
-    M = 10;
 
     % Initialize training matrix, boolean target matrix, and label vector. 
     [X,T,L] = formatData('features_train/');
@@ -35,20 +30,17 @@ function [W] = train_lr()
     
     while abs(prevError - error) > E
         
-        % Build activation matrix (A).
-        A = X * W;
-
-        % Build hypothesis matrix (Y).
-        Y = zeros(N,10);
+        A = X * W;% Activation Matrix.
+        Y = zeros(N,10);% Hypothesis Matrix.
+        
         for n = 1:N
-            expAk = exp(A(n,:));
+            expAk  = exp(A(n,:));
             expSum = sum(expAk);
             for k = 1:10
                 Y(n,k) = expAk(1,k) / expSum;
             end
         end
         
-
         % Calculate error
         prevError = error;
         error = 0;
@@ -58,7 +50,6 @@ function [W] = train_lr()
             end
         end
         error = -error / N;
-        %fprintf('Error: %f \n', error);
         
         % Calculate gradient
         gradient = Alpha * X' * (Y - T);
