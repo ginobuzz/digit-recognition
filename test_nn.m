@@ -1,4 +1,12 @@
-function error = test_nn(W_hidden, W_output)
+function [error, Y] = test_nn(W_hidden, W_output)
+
+
+    %===============================================
+    % Constants
+    %-----------------------------------------------
+    K = 10;                      % Number of classes
+    %===============================================
+    
 
     % Load training data.
     F = load('Train.mat');
