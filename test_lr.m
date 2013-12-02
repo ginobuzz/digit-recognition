@@ -1,59 +1,64 @@
-function Error = test_lr(W)
+function error = test_lr(W)
 %==========================================================================
-% test_lr: Tests learning parameters.
+% test_lr: Tests learning parameters against the test feature set.
 %
 %   Input:
-%       W - Learning Parameter Matrix.
+%       W - DxK sized learning parameter matrix.
 %
 %   Output:
-%       error - Percentage of incorrectly classified labels.
+%       error - test error.
 %
 %   Author: ginobuzz
 %==========================================================================
-    [X,T,L] = formatData('features_test/');
-    [N,D]   = size(X);
+   
 
-    % Build activation matrix (A).
-    A = zeros(N,10);
-    for k = 1:10
-        A(:,k) = X * W(:,k);
-    end
+    %===============================================
+    % Constants
+    %-----------------------------------------------
+    K = 10;                      % Number of classes
+    %===============================================
+  
+    
+    % Load training data.
+    F = load('Train.mat');
+    X = F.X;
+    T = F.T;
+    
+    % Append column of ones for bias
+    X = horzcat(ones(length(X),1),X);
 
-    % Build hypothesis matrix (Y).
-    Y = zeros(N,10);
+    % Determine size of training data.
+    [N,D] = size(X);
+    
+    % Create Activation Matrix.
+    A = X * W;
+        
+    % Create Prediction Matrix using SoftMax function.
+    Y = zeros(N,K);
     for n = 1:N
-        expSum = 0;
-        for k = 1:10
-            expSum = expSum + exp(A(n,k));
-        end
-
-        for k = 1:10
-            Y(n,k) = exp(A(n,k)) / expSum;
+        Ak = exp(A(n,:));
+        AkSum = sum(Ak);
+        for k = 1:K
+            Y(n,k) = Ak(1,k) / AkSum;
         end
     end
     
-    
-    % Form predictions
-    P = zeros(N,1);
+    % Form boolean prediciton matrix to compare to T.
+    P = zeros(N,K);
     for n = 1:N
-        p = 0;
-        for k = 1:10
-            if Y(n,k) > p
-                p = Y(n,k);
-                P(n,1) = k - 1;
-            end
-        end
+        [C,I]  = max(Y(n,:));
+        P(n,I) = 1;
     end
-    
-    % Compare
     numIncorrect = 0;
     for n = 1:N
-        if P(n,1) ~= L(n,1)
+        if ~isequal(P(n,:),T(n,:))
             numIncorrect = numIncorrect + 1;
         end
     end
     
-    Error = numIncorrect / N;
+    % Calculate final error.
+    error = numIncorrect / N;
+    fprintf('Test Error = %f \n',error);
     
 end
 

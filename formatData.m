@@ -1,4 +1,4 @@
-function [ X, T, L ] = formatData( dir )
+function [ X, T ] = formatData( dir )
 %=========================================================================
 % formatData: combines all 10 feature files into three matricies.
 % 
@@ -8,7 +8,6 @@ function [ X, T, L ] = formatData( dir )
 %   Output:
 %       X - Training Matrix of size NxD.
 %       T - Target matrix of size NxM.
-%       L - Label vector of size Nx1.
 %     
 %   Author: ginobuzz
 %=========================================================================
@@ -17,7 +16,6 @@ function [ X, T, L ] = formatData( dir )
 
     X = [];% Training Matrix
     T = [];% Target Matrix
-    L = [];% Label Vector
 
     for i = 1:10
 
@@ -30,23 +28,15 @@ function [ X, T, L ] = formatData( dir )
             eMsg = strcat('> [ERROR] File not found (', file_path, ').');
             error(eMsg);
         end
-
-        % Insert column of ones to front, for bias.
-        [n,d] = size(F);
-        tmpX  = horzcat(ones(n,1), F);
-        X     = vertcat(X,tmpX);
+        X = vertcat(X,F);
 
         % Build target boolean-matrix & append to T.
-        [n,d] = size(tmpX);
+        [n,d] = size(F);
         tmpT  = zeros(n,10);
         for j = 1:n
             tmpT(j,i) = 1;
         end
         T = vertcat(T,tmpT);
-
-        % Build label vector & append to L.
-        tmpL  = ones(n,1) * index;
-        L     = vertcat(L,tmpL);
 
     end
     
