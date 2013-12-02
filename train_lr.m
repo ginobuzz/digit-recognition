@@ -1,4 +1,4 @@
-function [W] = train_lr()
+function W = train_lr()
 %==========================================================================
 % train_lr: Trains learning parameter matrix using the SoftMax function.
 %
@@ -76,6 +76,6 @@ function [W] = train_lr()
         numIterations = numIterations + 1;
     end
     
-    fprintf('Training Error: %f \n', error);
+    fprintf('[Logistic Regression] Training Error: %f \n', error);
     
 end
