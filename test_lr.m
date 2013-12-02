@@ -58,7 +58,7 @@ function error = test_lr(W)
     
     % Calculate final error.
     error = numIncorrect / N;
-    fprintf('[Logistic Regression] Test Error = %f \n',error);
+    fprintf('Test Error = %f \n',error);
     
 end
 

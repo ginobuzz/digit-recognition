@@ -1,4 +1,4 @@
-function [error, Y] = test_nn(W_hidden, W_output)
+function [error, P, Y, A, test] = test_nn(W_hidden, W_output)
 
 
     %===============================================
@@ -9,7 +9,7 @@ function [error, Y] = test_nn(W_hidden, W_output)
     
 
     % Load training data.
-    F = load('Train.mat');
+    F = load('Test.mat');
     T = F.T;
     
     % Get size of data.
@@ -23,6 +23,7 @@ function [error, Y] = test_nn(W_hidden, W_output)
     % Apply activation function (tanh).
     A = X * W_hidden;
     Z = tanh(A);
+    test = Z;
          
     % Forward Propagate: hidden-layer --> output-layer.
     % ---------------------------------------------------

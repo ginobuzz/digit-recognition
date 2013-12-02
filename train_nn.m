@@ -1,4 +1,4 @@
-function [W_hidden, W_output] = train_nn()
+function [W_hidden, W_output, P] = train_nn()
 %==========================================================================
 % train_nn: Trains learning parameter matrix using a Neural Network.
 %
@@ -14,7 +14,7 @@ function [W_hidden, W_output] = train_nn()
     %-----------------------------------------------
     LearnRate = 0.0015;              % Learning Rate
     Convergence = 0.005;      % Convergence Criteria
-    MaxIterations = 100;       % Maximum Iterations
+    MaxIterations = 1;       % Maximum Iterations
     K = 10;                      % Number of classes
     S = 1000;                 % Size of hidden layer
     %===============================================
