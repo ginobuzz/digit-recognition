@@ -14,7 +14,7 @@ function W = train_lr()
     %-----------------------------------------------
     LearnRate = 0.0001;              % Learning Rate
     Convergence = 0.0005;     % Convergence Criteria
-    MaxIterations = 1000;       % Maximum Iterations
+    MaxIterations = 3000;       % Maximum Iterations
     K = 10;                      % Number of classes
     %===============================================
 
@@ -45,26 +45,24 @@ function W = train_lr()
         
         % Create Prediction Matrix using SoftMax function.
         Y = zeros(N,K);
-        for n = 1:N
-            Ak = exp(A(n,:));
-            AkSum = sum(Ak);
-            for k = 1:K
-                Y(n,k) = Ak(1,k) / AkSum;
-            end
+        Ak = exp(A);
+        AkSum = sum(Ak,2);
+        for k = 1:K
+            Y(:,k) = Ak(:,k) / AkSum(k,1);
         end
         
         % Calculate error of predictions. 
-        newError  = 0;
-        for n = 1:N
-            for k = 1:K
-                newError = newError + (T(n,k) * log(Y(n,k)));
-            end
+        newError = 0;
+        for k = 1:K
+            cost = T(:,k)' * log(Y(:,k));
+            newError = newError + cost;
         end
         newError = -newError/N;
         
         % Check for convergence.
         if abs(error - newError) < Convergence
             error = newError;
+            fprintf('Convergence criteria met.\n');
             break;
         end
         error = newError;

@@ -1,4 +1,4 @@
-function [error, P, Y, A, test] = test_nn(W_hidden, W_output)
+function [error, Y] = test_nn(W_hidden, W_output)
 
 
     %===============================================
@@ -11,33 +11,23 @@ function [error, P, Y, A, test] = test_nn(W_hidden, W_output)
     % Load training data.
     F = load('Test.mat');
     T = F.T;
-    
-    % Get size of data.
     [N,M] = size(F.X);
     
-    
     % Forward Propagate: input-layer --> hidden-layer.
-    % ---------------------------------------------------    
-    % Add column of ones for bias.
+    % ---------------------------------------------------   
     X = horzcat(ones(length(F.X),1), F.X);
-    % Apply activation function (tanh).
     A = X * W_hidden;
     Z = tanh(A);
-    test = Z;
          
     % Forward Propagate: hidden-layer --> output-layer.
     % ---------------------------------------------------
-    % Add column of ones for bias.
     Z = horzcat(ones(length(Z),1),Z);
-    % Apply activation function (softmax).
     A = Z * W_output;
     Y = zeros(N,K);
-    for n = 1:N
-        Ak = exp(A(n,:));
-        AkSum = sum(Ak);
-        for k = 1:K
-            Y(n,k) = Ak(1,k) / AkSum;
-        end
+    Ak = exp(A);
+    AkSum = sum(Ak,2);
+    for k = 1:K
+        Y(:,k) = Ak(:,k) / AkSum(k,1);
     end
     
     % Derive boolean prediction matrix from Y.
@@ -48,16 +38,16 @@ function [error, P, Y, A, test] = test_nn(W_hidden, W_output)
         P(n,I) = 1;
     end
     
-    % Calculate Error
-    % ---------------------------------------------------
-    numError = 0;
+    numIncorrect = 0;
     for n = 1:N
-        if ~isequal(P(n,:), Y(n,:))
-            numError = numError + 1;
+        if ~isequal(P(n,:),T(n,:))
+            numIncorrect = numIncorrect + 1;
         end
     end
-    error = numError/N;
-    fprintf('[Neural Network] Test Error = %f \n',error);
+    error = numIncorrect/N;
+    
+    
+    fprintf('Final Test Error = %f \n',error);
     
 end
 
