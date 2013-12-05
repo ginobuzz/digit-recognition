@@ -12,10 +12,10 @@ function [W_L1, W_L2, Y] = train_nn()
     LR = 0.2;
     
     % Convergence Criteria
-    Convergence = 0.000001;
+    Convergence = 0.0000000001;
 
     % Number of Hidden Units
-    H = 380;
+    H = 350;
 
     % Number of Max Iterations
     MaxIterations = 2000;
@@ -32,15 +32,17 @@ function [W_L1, W_L2, Y] = train_nn()
     [N,D] = size(X);
 
     % Initialize Weights.
-    %W_L1 = randi([-10,10], D, H) / (10);
-    %W_L2 = randi([-10,10], H+1, K) / (10 * N);
-    W = load('FixedWeights.mat');
-    W_L1 = W.W_L1;
-    W_L2 = W.W_L2;
+    W_L1 = randi([-10,10], D, H) / (10);
+    W_L2 = randi([-10,10], H+1, K) / (10 * N);
+    %W = load('FixedWeights.mat');
+    %W_L1 = W.W_L1;
+    %W_L2 = W.W_L2;
     
     prevError = 100;
     
-
+    prevDelta1 = zeros(1, H+1);
+    prevDelta2 = zeros(1, K);
+    
     
     for i = 1:MaxIterations
         
@@ -69,22 +71,19 @@ function [W_L1, W_L2, Y] = train_nn()
             fprintf('Convergence Criteria Met\n');
             prevError = error;
             break;
-        elseif errorChange > 0
-            LR = 0.5;
-        else
-            LR = 1.2;
         end
         prevError = error;
         
         
         DeltaL2 = Y - T;
-        GradientL2 = Z' * DeltaL2;
+        [GradientL2, prevDelta2] = RPropGradient(Z, DeltaL2, prevDelta2);
         
         DeltaL1 = (1 - Z.^2) .* (W_L2 * DeltaL2')';
-        GradientL1 =  X' * DeltaL1;
+        GradientL1 = X' * DeltaL1; 
+        %[GradientL1, prevDelta1] =  RPropGradient(X, DeltaL1, prevDelta1);
         
-        W_L1 = W_L1 - ((LR) * GradientL1(:,2:end));
-        W_L2 = W_L2 - ((LR) * GradientL2);
+        W_L1 = W_L1 - (0.5 * GradientL1(:,2:end));
+        W_L2 = W_L2 - GradientL2;
         
         
         
@@ -94,3 +93,23 @@ function [W_L1, W_L2, Y] = train_nn()
     fprintf('Final Training Error: %f \n', prevError);
     
 end
+
+function [Gradient, D] = RPropGradient(Neurons, Delta, prevD)
+    Gradient = Neurons' * Delta;
+    [N,M] = size(Delta);
+    D = sum(Delta);
+    diff = prevD - D;
+    for m = 1:M
+        if diff(1,m) > 0
+            Gradient(:,m) = 0.5 * Gradient(:,m);
+        else
+            Gradient(:,m) = 1.2 * Gradient(:,m);
+        end
+    end
+    
+end
+
+
+
+
+
