@@ -18,9 +18,10 @@ function error = test_lr(W)
     K = 10;                      % Number of classes
     %===============================================
   
+   
     
     % Load training data.
-    F = load('Train.mat');
+    F = load('Test.mat');
     X = F.X;
     T = F.T;
     
@@ -35,12 +36,13 @@ function error = test_lr(W)
         
     % Create Prediction Matrix using SoftMax function.
     Y = zeros(N,K);
+    Ak = exp(A);
+    AkSum = zeros(N,1);
     for n = 1:N
-        Ak = exp(A(n,:));
-        AkSum = sum(Ak);
-        for k = 1:K
-            Y(n,k) = Ak(1,k) / AkSum;
-        end
+        AkSum(n,1) = sum(Ak(n,:));
+    end
+    for n = 1:N
+        Y(n,:) = Ak(n,:) ./ AkSum(n,1);
     end
     
     % Form boolean prediciton matrix to compare to T.
@@ -58,7 +60,7 @@ function error = test_lr(W)
     
     % Calculate final error.
     error = numIncorrect / N;
-    fprintf('Test Error = %f \n',error);
+    %fprintf('Test Error = %f \n',error);
     
 end
 

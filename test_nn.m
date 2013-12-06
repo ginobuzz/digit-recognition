@@ -1,4 +1,4 @@
-function [error, Y] = test_nn(W_L1, W_L2)
+function [error] = test_nn(W_L1, W_L2)
 
 
     %===============================================
@@ -20,12 +20,15 @@ function [error, Y] = test_nn(W_L1, W_L2)
     Y = zeros(N,10);
     A2 = Z * W_L2;
     A2 = 1 ./ (1 + exp(-A2));
-    A2 = exp(A2);
-    A2Sum = sum(A2,2);
-    for k = 1:K
-        Y(:,k) = A2(:,k) / A2Sum(k,1);
+    Ak = exp(A2);
+    AkSum = zeros(N,1);
+    for n = 1:N
+        AkSum(n,1) = sum(Ak(n,:));
     end
-
+    for n = 1:N
+        Y(n,:) = Ak(n,:) ./ AkSum(n,1);
+    end
+    
     P = zeros(size(T));
     for n = 1:N
         [C,I] = max(Y(n,:));
@@ -41,7 +44,7 @@ function [error, Y] = test_nn(W_L1, W_L2)
     error = numIncorrect/N;
     
     
-    fprintf('Final Test Error = %f \n',error);
+    %fprintf('Final Test Error = %f \n',error);
     
 end
 

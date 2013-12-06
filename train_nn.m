@@ -1,4 +1,4 @@
-function [W_L1, W_L2, Y] = train_nn()
+function [W_L1, W_L2, plotData, lrData, testData] = train_nn()
 %==========================================================================
 % train_nn: Trains learning parameter matrix using a Neural Network.
 %
@@ -9,16 +9,21 @@ function [W_L1, W_L2, Y] = train_nn()
 %==========================================================================
 
     % Learning Rate
-    LR = 0.15;
+    LR = 0.5;
+    LRmax = 0.99;
+    LRmin = 0.01;
+    stepUp = 1.15;
+    stepDown = 0.55;
+    
     
     % Convergence Criteria
-    Convergence = 0.0001;
+    Convergence = 0.00001;
 
     % Number of Hidden Units
     H = 350;
 
     % Number of Max Iterations
-    MaxIterations = 2000;
+    MaxIterations = 200;
 
     % Number of Classes
     K = 10;
@@ -39,8 +44,11 @@ function [W_L1, W_L2, Y] = train_nn()
     %W_L2 = W.W_L2;
     
     prevError = 100;
-    
+    oldDif = 0;
 
+    plotData = zeros(MaxIterations,1);
+    lrData = zeros(MaxIterations,1);
+    testData = zeros(MaxIterations,1);
     
     for i = 1:MaxIterations
         
@@ -50,31 +58,37 @@ function [W_L1, W_L2, Y] = train_nn()
         Y = zeros(N,10);
         A2 = Z * W_L2;
         A2 = 1 ./ (1 + exp(-A2));
-        A2 = exp(A2);
-        A2Sum = sum(A2,2);
-        for k = 1:K
-            Y(:,k) = A2(:,k) / A2Sum(k,1);
+        Ak = exp(A2);
+        AkSum = zeros(N,1);
+        for n = 1:N
+            AkSum(n,1) = sum(Ak(n,:));
         end
-
+        for n = 1:N
+            Y(n,:) = Ak(n,:) ./ AkSum(n,1);
+        end
+        
         error = 0;
         for k = 1:K
             error = error + (T(:,k)' * log(Y(:,k)));
         end
         error = -(1/N) * error;
-        fprintf('Training Error: %f \n', error);
+        fprintf('Error: %f. (I: %d) (LR: %f) \n', error, i, LR);
  
         
         errorChange = prevError - error;
+        newDif = errorChange;
+        
         if abs(errorChange) < Convergence
-            fprintf('Convergence Criteria Met\n');
-            prevError = error;
-            break;
-        elseif errorChange > 0
-            LR = LR * 0.99;
-        else
-            LR = LR * 1.01;
+            if error < 1.5
+            
+                fprintf('Convergence Criteria Met\n');
+                prevError = error;
+                break;
+            end
         end
         prevError = error;
+        
+        
         
         
         DeltaL2 = Y - T;
@@ -83,10 +97,43 @@ function [W_L1, W_L2, Y] = train_nn()
         DeltaL1 = (1 - Z.^2) .* (W_L2 * DeltaL2')';
         GradientL1 =  X' * DeltaL1;
         
-        W_L1 = W_L1 - (LR * GradientL1(:,2:end));
-        W_L2 = W_L2 - (LR * GradientL2);
+        % Form boolean prediciton matrix to compare to T.
+        P = zeros(N,K);
+        for n = 1:N
+            [C,I]  = max(Y(n,:));
+            P(n,I) = 1;
+        end
+        numIncorrect = 0;
+        for n = 1:N
+            if ~isequal(P(n,:),T(n,:))
+                numIncorrect = numIncorrect + 1;
+            end
+        end
+        % Calculate final error.
+        te = numIncorrect / N;
+        
+        LRmax = te * 0.7;
+        
+        if newDif < oldDif
+            LR = min(LR*stepUp, LRmax);
+        elseif newDif == 0
+            LR = min(LR*stepUp, LRmax);
+        else
+            %LR = 0.5;
+            LR = max(LR*stepDown, LRmin);
+            %oldDif = max(newDif, 0);
+        end 
+        oldDif = max(newDif, 0);
         
         
+        W_L1 = W_L1 - ((LR/N) * GradientL1(:,2:end));
+        W_L2 = W_L2 - ((LR/N) * GradientL2);
+        
+        
+        
+        plotData(i,1) = te;
+        lrData(i,1) = LR;
+        testData(i,1) = test_nn(W_L1, W_L2);
         
         
     end
